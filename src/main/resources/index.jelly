@@ -3,5 +3,5 @@
   Since we don't really have anything dynamic here, let's just use static HTML. 
 -->
 <div>
-  This plugin is a Talk notifier that can publish build status to Talk channels.
+  This plugin is a Jianliao notifier that can publish build status to Jianliao topics.
 </div>

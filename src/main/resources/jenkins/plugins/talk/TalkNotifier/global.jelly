@@ -11,7 +11,7 @@
     tags they use. Views are always organized according to its owner class,
     so it should be straightforward to find them.
   -->
-<f:section title="Global Talk Notifier Settings" name="talk">
+<f:section title="Global Jianliao Notifier Settings" name="talk">
     <f:entry title="Integration Token" help="${rootURL}/plugin/talk/help-globalConfig-talkToken.html">
         <f:textbox field="token" name="talkToken" value="${descriptor.getToken()}" />
     </f:entry>
