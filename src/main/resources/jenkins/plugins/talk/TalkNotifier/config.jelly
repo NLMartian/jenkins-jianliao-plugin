@@ -1,0 +1,52 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
+         xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="Notify Build Start">
+        <f:checkbox name="talkStartNotification" value="true" checked="${instance.getStartNotification()}"/>
+    </f:entry>
+
+    <f:entry title="Notify Aborted">
+        <f:checkbox name="talkNotifyAborted" value="true" checked="${instance.getNotifyAborted()}"/>
+    </f:entry>
+
+    <f:entry title="Notify Failure">
+        <f:checkbox name="talkNotifyFailure" value="true" checked="${instance.getNotifyFailure()}"/>
+    </f:entry>
+
+    <f:entry title="Notify Not Built">
+        <f:checkbox name="talkNotifyNotBuilt" value="true" checked="${instance.getNotifyNotBuilt()}"/>
+    </f:entry>
+
+    <f:entry title="Notify Success">
+        <f:checkbox name="talkNotifySuccess" value="true" checked="${instance.getNotifySuccess()}"/>
+    </f:entry>
+
+    <f:entry title="Notify Unstable">
+        <f:checkbox name="talkNotifyUnstable" value="true" checked="${instance.getNotifyUnstable()}"/>
+    </f:entry>
+
+    <f:entry title="Notify Back To Normal">
+        <f:checkbox name="talkNotifyBackToNormal" value="true" checked="${instance.getNotifyBackToNormal()}"/>
+    </f:entry>
+
+    <f:advanced>
+        <f:entry title="Notify Repeated Failure">
+            <f:checkbox name="talkNotifyRepeatedFailure" value="true"
+                        checked="${instance.getNotifyRepeatedFailure()}"/>
+        </f:entry>
+        <f:entry title="Include Test Summary">
+            <f:checkbox name="includeTestSummary" value="true" checked="${instance.includeTestSummary()}"/>
+        </f:entry>
+
+        <f:entry title="Show Commit List with Titles and Authors">
+            <f:checkbox name="talkShowCommitList" value="true" checked="${instance.getShowCommitList()}"/>
+        </f:entry>
+
+        <f:entry title="Integration Token" help="${rootURL}/plugin/talk/help-projectConfig-talkToken.html">
+            <f:textbox name="talToken" value="${instance.getAuthToken()}"/>
+        </f:entry>
+
+        <f:validateButton
+                title="${%Test Connection}" progress="${%Testing...}"
+                method="testConnection" with="talkToken"/>
+    </f:advanced>
+</j:jelly>

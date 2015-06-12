@@ -1,4 +1,4 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.talk;
 
 import org.apache.http.HttpStatus;
 import org.junit.Test;
@@ -7,14 +7,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class StandardSlackServiceTest {
+public class StandardTalkServiceTest {
 
     /**
      * Publish should generally not rethrow exceptions, or it will cause a build job to fail at end.
      */
     @Test
     public void publishWithBadHostShouldNotRethrowExceptions() {
-        StandardSlackService service = new StandardSlackService("foo", "token", "#general");
+        StandardTalkService service = new StandardTalkService("token");
         service.setHost("hostvaluethatwillcausepublishtofail");
         service.publish("message");
     }
@@ -24,7 +24,7 @@ public class StandardSlackServiceTest {
      */
     @Test
     public void invalidTeamDomainShouldFail() {
-        StandardSlackService service = new StandardSlackService("my", "token", "#general");
+        StandardTalkService service = new StandardTalkService("token");
         service.publish("message");
     }
 
@@ -33,13 +33,13 @@ public class StandardSlackServiceTest {
      */
     @Test
     public void invalidTokenShouldFail() {
-        StandardSlackService service = new StandardSlackService("tinyspeck", "token", "#general");
+        StandardTalkService service = new StandardTalkService("token");
         service.publish("message");
     }
 
     @Test
     public void publishToASingleRoomSendsASingleMessage() {
-        StandardSlackServiceStub service = new StandardSlackServiceStub("domain", "token", "#room1");
+        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1");
         HttpClientStub httpClientStub = new HttpClientStub();
         service.setHttpClient(httpClientStub);
         service.publish("message");
@@ -48,7 +48,7 @@ public class StandardSlackServiceTest {
 
     @Test
     public void publishToMultipleRoomsSendsAMessageToEveryRoom() {
-        StandardSlackServiceStub service = new StandardSlackServiceStub("domain", "token", "#room1,#room2,#room3");
+        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1,#room2,#room3");
         HttpClientStub httpClientStub = new HttpClientStub();
         service.setHttpClient(httpClientStub);
         service.publish("message");
@@ -57,7 +57,7 @@ public class StandardSlackServiceTest {
 
     @Test
     public void successfulPublishToASingleRoomReturnsTrue() {
-        StandardSlackServiceStub service = new StandardSlackServiceStub("domain", "token", "#room1");
+        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1");
         HttpClientStub httpClientStub = new HttpClientStub();
         httpClientStub.setHttpStatus(HttpStatus.SC_OK);
         service.setHttpClient(httpClientStub);
@@ -66,7 +66,7 @@ public class StandardSlackServiceTest {
 
     @Test
     public void successfulPublishToMultipleRoomsReturnsTrue() {
-        StandardSlackServiceStub service = new StandardSlackServiceStub("domain", "token", "#room1,#room2,#room3");
+        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1,#room2,#room3");
         HttpClientStub httpClientStub = new HttpClientStub();
         httpClientStub.setHttpStatus(HttpStatus.SC_OK);
         service.setHttpClient(httpClientStub);
@@ -75,7 +75,7 @@ public class StandardSlackServiceTest {
 
     @Test
     public void failedPublishToASingleRoomReturnsFalse() {
-        StandardSlackServiceStub service = new StandardSlackServiceStub("domain", "token", "#room1");
+        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1");
         HttpClientStub httpClientStub = new HttpClientStub();
         httpClientStub.setHttpStatus(HttpStatus.SC_NOT_FOUND);
         service.setHttpClient(httpClientStub);
@@ -84,7 +84,7 @@ public class StandardSlackServiceTest {
 
     @Test
     public void singleFailedPublishToMultipleRoomsReturnsFalse() {
-        StandardSlackServiceStub service = new StandardSlackServiceStub("domain", "token", "#room1,#room2,#room3");
+        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1,#room2,#room3");
         HttpClientStub httpClientStub = new HttpClientStub();
         httpClientStub.setFailAlternateResponses(true);
         httpClientStub.setHttpStatus(HttpStatus.SC_OK);
@@ -94,7 +94,7 @@ public class StandardSlackServiceTest {
 
     @Test
     public void publishToEmptyRoomReturnsTrue() {
-        StandardSlackServiceStub service = new StandardSlackServiceStub("domain", "token", "");
+        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "");
         HttpClientStub httpClientStub = new HttpClientStub();
         httpClientStub.setHttpStatus(HttpStatus.SC_OK);
         service.setHttpClient(httpClientStub);

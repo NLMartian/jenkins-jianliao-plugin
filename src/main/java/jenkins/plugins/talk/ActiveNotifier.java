@@ -1,4 +1,4 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.talk;
 
 import hudson.EnvVars;
 import hudson.model.AbstractBuild;
@@ -12,7 +12,6 @@ import hudson.model.Run;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.AffectedFile;
 import hudson.scm.ChangeLogSet.Entry;
-import hudson.tasks.test.AbstractTestResultAction;
 import hudson.triggers.SCMTrigger;
 import hudson.util.LogTaskListener;
 import org.apache.commons.lang.StringUtils;
@@ -30,19 +29,19 @@ import static java.util.logging.Level.SEVERE;
 @SuppressWarnings("rawtypes")
 public class ActiveNotifier implements FineGrainedNotifier {
 
-    private static final Logger logger = Logger.getLogger(SlackListener.class.getName());
+    private static final Logger logger = Logger.getLogger(TalkListener.class.getName());
 
-    SlackNotifier notifier;
+    TalkNotifier notifier;
     BuildListener listener;
 
-    public ActiveNotifier(SlackNotifier notifier, BuildListener listener) {
+    public ActiveNotifier(TalkNotifier notifier, BuildListener listener) {
         super();
         this.notifier = notifier;
         this.listener = listener;
     }
 
-    private SlackService getSlack(AbstractBuild r) {
-        return notifier.newSlackService(r, listener);
+    private TalkService getTalk(AbstractBuild r) {
+        return notifier.newTalkService(r, listener);
     }
 
     public void deleted(AbstractBuild r) {
@@ -59,7 +58,7 @@ public class ActiveNotifier implements FineGrainedNotifier {
             if (scmCause == null) {
                 MessageBuilder message = new MessageBuilder(notifier, build);
                 message.append(causeAction.getShortDescription());
-                notifyStart(build, message.appendOpenLink().toString());
+                notifyStart(build, message.toString());
             }
         }
 
@@ -67,7 +66,7 @@ public class ActiveNotifier implements FineGrainedNotifier {
         if (changes != null) {
             notifyStart(build, changes);
         } else {
-            notifyStart(build, getBuildStatusMessage(build, false, notifier.includeCustomMessage()));
+            notifyStart(build, getBuildStatusMessage(build, notifier.includeCustomMessage()));
         }
     }
 
@@ -75,9 +74,9 @@ public class ActiveNotifier implements FineGrainedNotifier {
         AbstractProject<?, ?> project = build.getProject();
         AbstractBuild<?, ?> previousBuild = project.getLastBuild().getPreviousCompletedBuild();
         if (previousBuild == null) {
-            getSlack(build).publish(message, "good");
+            getTalk(build).publish(message);
         } else {
-            getSlack(build).publish(message, getBuildColor(previousBuild));
+            getTalk(build).publish(message, getOpenLink(previousBuild));
         }
     }
 
@@ -85,6 +84,7 @@ public class ActiveNotifier implements FineGrainedNotifier {
     }
 
     public void completed(AbstractBuild r) {
+        logger.info("complete");
         AbstractProject<?, ?> project = r.getProject();
         Result result = r.getResult();
         AbstractBuild<?, ?> previousBuild = project.getLastBuild();
@@ -102,10 +102,10 @@ public class ActiveNotifier implements FineGrainedNotifier {
                 && notifier.getNotifyBackToNormal())
                 || (result == Result.SUCCESS && notifier.getNotifySuccess())
                 || (result == Result.UNSTABLE && notifier.getNotifyUnstable())) {
-            getSlack(r).publish(getBuildStatusMessage(r, notifier.includeTestSummary(),
-                    notifier.includeCustomMessage()), getBuildColor(r));
+            getTalk(r).publish(getBuildStatusMessage(r, notifier.includeCustomMessage()), getOpenLink(r));
             if (notifier.getShowCommitList()) {
-                getSlack(r).publish(getCommitList(r), getBuildColor(r));
+                logger.info("show commit list");
+                getTalk(r).publish(getCommitList(r), getOpenLink(r));
             }
         }
     }
@@ -138,7 +138,7 @@ public class ActiveNotifier implements FineGrainedNotifier {
         message.append(" (");
         message.append(files.size());
         message.append(" file(s) changed)");
-        return message.appendOpenLink().toString();
+        return message.toString();
     }
 
     String getCommitList(AbstractBuild r) {
@@ -174,25 +174,14 @@ public class ActiveNotifier implements FineGrainedNotifier {
         return message.toString();
     }
 
-    static String getBuildColor(AbstractBuild r) {
-        Result result = r.getResult();
-        if (result == Result.SUCCESS) {
-            return "good";
-        } else if (result == Result.FAILURE) {
-            return "danger";
-        } else {
-            return "warning";
-        }
+    String getOpenLink(AbstractBuild r) {
+        return notifier.getBuildServerUrl() + r.getUrl();
     }
 
-    String getBuildStatusMessage(AbstractBuild r, boolean includeTestSummary, boolean includeCustomMessage) {
+    String getBuildStatusMessage(AbstractBuild r, boolean includeCustomMessage) {
         MessageBuilder message = new MessageBuilder(notifier, r);
         message.appendStatusMessage();
         message.appendDuration();
-        message.appendOpenLink();
-        if (includeTestSummary) {
-            message.appendTestSummary();
-        }
         if (includeCustomMessage) {
             message.appendCustomMessage();
         }
@@ -202,10 +191,10 @@ public class ActiveNotifier implements FineGrainedNotifier {
     public static class MessageBuilder {
 
         private StringBuffer message;
-        private SlackNotifier notifier;
+        private TalkNotifier notifier;
         private AbstractBuild build;
 
-        public MessageBuilder(SlackNotifier notifier, AbstractBuild build) {
+        public MessageBuilder(TalkNotifier notifier, AbstractBuild build) {
             this.notifier = notifier;
             this.message = new StringBuffer();
             this.build = build;
@@ -266,32 +255,9 @@ public class ActiveNotifier implements FineGrainedNotifier {
             return this;
         }
 
-        public MessageBuilder appendOpenLink() {
-            String url = notifier.getBuildServerUrl() + build.getUrl();
-            message.append(" (<").append(url).append("|Open>)");
-            return this;
-        }
-
         public MessageBuilder appendDuration() {
             message.append(" after ");
             message.append(build.getDurationString());
-            return this;
-        }
-
-        public MessageBuilder appendTestSummary() {
-            AbstractTestResultAction<?> action = this.build
-                    .getAction(AbstractTestResultAction.class);
-            if (action != null) {
-                int total = action.getTotalCount();
-                int failed = action.getFailCount();
-                int skipped = action.getSkipCount();
-                message.append("\nTest Status:\n");
-                message.append("\tPassed: " + (total - failed - skipped));
-                message.append(", Failed: " + failed);
-                message.append(", Skipped: " + skipped);
-            } else {
-                message.append("\nNo Tests found.");
-            }
             return this;
         }
 

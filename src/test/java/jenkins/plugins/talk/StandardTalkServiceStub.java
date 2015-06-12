@@ -1,11 +1,11 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.talk;
 
-public class StandardSlackServiceStub extends StandardSlackService {
+public class StandardTalkServiceStub extends StandardTalkService {
 
     private HttpClientStub httpClientStub;
 
-    public StandardSlackServiceStub(String teamDomain, String token, String roomId) {
-        super(teamDomain, token, roomId);
+    public StandardTalkServiceStub(String teamDomain, String token, String roomId) {
+        super(token);
     }
 
     @Override

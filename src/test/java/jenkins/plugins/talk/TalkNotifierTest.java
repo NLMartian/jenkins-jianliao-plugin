@@ -1,4 +1,4 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.talk;
 
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
@@ -12,9 +12,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @RunWith(Parameterized.class)
-public class SlackNotifierTest extends TestCase {
+public class TalkNotifierTest extends TestCase {
 
-    private SlackNotifierStub.DescriptorImplStub descriptor;
+    private TalkNotifierStub.DescriptorImplStub descriptor;
     private SlackServiceStub slackServiceStub;
     private boolean response;
     private FormValidation.Kind expectedResult;
@@ -22,10 +22,10 @@ public class SlackNotifierTest extends TestCase {
     @Before
     @Override
     public void setUp() {
-        descriptor = new SlackNotifierStub.DescriptorImplStub();
+        descriptor = new TalkNotifierStub.DescriptorImplStub();
     }
 
-    public SlackNotifierTest(SlackServiceStub slackServiceStub, boolean response, FormValidation.Kind expectedResult) {
+    public TalkNotifierTest(SlackServiceStub slackServiceStub, boolean response, FormValidation.Kind expectedResult) {
         this.slackServiceStub = slackServiceStub;
         this.response = response;
         this.expectedResult = expectedResult;
@@ -47,7 +47,7 @@ public class SlackNotifierTest extends TestCase {
         }
         descriptor.setSlackService(slackServiceStub);
         try {
-            FormValidation result = descriptor.doTestConnection("teamDomain", "authToken", "room", "buildServerUrl");
+            FormValidation result = descriptor.doTestConnection("authToken", "buildServerUrl");
             assertEquals(result.kind, expectedResult);
         } catch (Descriptor.FormException e) {
             e.printStackTrace();
@@ -55,7 +55,7 @@ public class SlackNotifierTest extends TestCase {
         }
     }
 
-    public static class SlackServiceStub implements SlackService {
+    public static class SlackServiceStub implements TalkService {
 
         private boolean response;
 

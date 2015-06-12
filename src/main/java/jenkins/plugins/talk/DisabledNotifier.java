@@ -1,4 +1,4 @@
-package jenkins.plugins.slack;
+package jenkins.plugins.talk;
 
 import hudson.model.AbstractBuild;
 
