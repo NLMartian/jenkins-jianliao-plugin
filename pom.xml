@@ -36,9 +36,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com/jenkinsci/slack-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/slack-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/slack-plugin</url>
+        <connection>scm:git:ssh://git@github.com/jenkinsci/jianliao-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/jiaoliao-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/jiaoliao-plugin</url>
         <tag>HEAD</tag>
     </scm>
 
