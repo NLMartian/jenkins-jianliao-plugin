@@ -45,7 +45,7 @@ public class TalkNotifierTest extends TestCase {
         if (slackServiceStub != null) {
             slackServiceStub.setResponse(response);
         }
-        descriptor.setSlackService(slackServiceStub);
+        descriptor.setTalkService(slackServiceStub);
         try {
             FormValidation result = descriptor.doTestConnection("authToken", "buildServerUrl");
             assertEquals(result.kind, expectedResult);
