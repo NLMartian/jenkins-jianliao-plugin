@@ -1,5 +1,9 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout"
          xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="Web Hook URL" help="${rootURL}/plugin/talk/help-projectConfig-webHook.html">
+        <f:textbox name="talkWebHook" value="${instance.getWebHook()}"/>
+    </f:entry>
+
     <f:entry title="Notify Build Start">
         <f:checkbox name="talkStartNotification" value="true" checked="${instance.getStartNotification()}"/>
     </f:entry>
@@ -41,12 +45,8 @@
             <f:checkbox name="talkShowCommitList" value="true" checked="${instance.getShowCommitList()}"/>
         </f:entry>
 
-        <f:entry title="Integration Token" help="${rootURL}/plugin/talk/help-projectConfig-talkToken.html">
-            <f:textbox name="talToken" value="${instance.getAuthToken()}"/>
-        </f:entry>
-
         <f:validateButton
                 title="${%Test Connection}" progress="${%Testing...}"
-                method="testConnection" with="talkToken"/>
+                method="testConnection" with="talkWebHook"/>
     </f:advanced>
 </j:jelly>

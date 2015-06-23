@@ -27,7 +27,7 @@ public class TalkNotifier extends Notifier {
 
     private static final Logger logger = Logger.getLogger(TalkNotifier.class.getName());
 
-    private String authToken;
+    private String webHook;
     private String buildServerUrl;
     private String sendAs;
     private boolean startNotification;
@@ -46,8 +46,8 @@ public class TalkNotifier extends Notifier {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    public String getAuthToken() {
-        return authToken;
+    public String getWebHook() {
+        return webHook;
     }
 
     public String getBuildServerUrl() {
@@ -105,12 +105,12 @@ public class TalkNotifier extends Notifier {
     }
 
     @DataBoundConstructor
-    public TalkNotifier(final String authToken, final String buildServerUrl,
+    public TalkNotifier(final String webHook, final String buildServerUrl,
                         final String sendAs, final boolean startNotification, final boolean notifyAborted, final boolean notifyFailure,
                         final boolean notifyNotBuilt, final boolean notifySuccess, final boolean notifyUnstable, final boolean notifyBackToNormal,
                         final boolean notifyRepeatedFailure, final boolean includeTestSummary, final boolean showCommitList) {
         super();
-        this.authToken = authToken;
+        this.webHook = webHook;
         this.buildServerUrl = buildServerUrl;
         this.sendAs = sendAs;
         this.startNotification = startNotification;
@@ -130,9 +130,9 @@ public class TalkNotifier extends Notifier {
     }
 
     public TalkService newTalkService(AbstractBuild r, BuildListener listener) {
-        String authToken = this.authToken;
-        if (StringUtils.isEmpty(authToken)) {
-            authToken = getDescriptor().getToken();
+        String webHookn = this.webHook;
+        if (StringUtils.isEmpty(webHook)) {
+            webHook = getDescriptor().getWebHook();
         }
 
         EnvVars env = null;
@@ -142,9 +142,9 @@ public class TalkNotifier extends Notifier {
             listener.getLogger().println("Error retrieving environment vars: " + e.getMessage());
             env = new EnvVars();
         }
-        authToken = env.expand(authToken);
+        webHook = env.expand(webHook);
 
-        return new StandardTalkService(authToken);
+        return new StandardTalkService(webHook);
     }
 
     @Override
@@ -169,7 +169,7 @@ public class TalkNotifier extends Notifier {
     @Extension
     public static class DescriptorImpl extends BuildStepDescriptor<Publisher> {
 
-        private String token;
+        private String webHook;
         private String buildServerUrl;
         private String sendAs;
 
@@ -177,8 +177,8 @@ public class TalkNotifier extends Notifier {
             load();
         }
 
-        public String getToken() {
-            return token;
+        public String getWebHook() {
+            return webHook;
         }
 
         public String getBuildServerUrl() {
@@ -201,7 +201,7 @@ public class TalkNotifier extends Notifier {
 
         @Override
         public TalkNotifier newInstance(StaplerRequest sr, JSONObject json) {
-            String token = sr.getParameter("talkToken");
+            String webHook = sr.getParameter("talkWebHook");
             boolean startNotification = "true".equals(sr.getParameter("talkStartNotification"));
             boolean notifySuccess = "true".equals(sr.getParameter("talkNotifySuccess"));
             boolean notifyAborted = "true".equals(sr.getParameter("talkNotifyAborted"));
@@ -212,14 +212,14 @@ public class TalkNotifier extends Notifier {
             boolean notifyRepeatedFailure = "true".equals(sr.getParameter("talkNotifyRepeatedFailure"));
             boolean includeTestSummary = "true".equals(sr.getParameter("includeTestSummary"));
             boolean showCommitList = "true".equals(sr.getParameter("talkShowCommitList"));
-            return new TalkNotifier(token, buildServerUrl, sendAs, startNotification, notifyAborted,
+            return new TalkNotifier(webHook, buildServerUrl, sendAs, startNotification, notifyAborted,
                     notifyFailure, notifyNotBuilt, notifySuccess, notifyUnstable, notifyBackToNormal, notifyRepeatedFailure,
                     includeTestSummary, showCommitList);
         }
 
         @Override
         public boolean configure(StaplerRequest sr, JSONObject formData) throws FormException {
-            token = sr.getParameter("talkToken");
+            webHook = sr.getParameter("talkWebHook");
             buildServerUrl = sr.getParameter("talkBuildServerUrl");
             sendAs = sr.getParameter("talkSendAs");
             if(buildServerUrl == null || buildServerUrl == "") {
@@ -233,28 +233,28 @@ public class TalkNotifier extends Notifier {
             return super.configure(sr, formData);
         }
 
-        TalkService getTalkService(final String authToken) {
-            return new StandardTalkService(authToken);
+        TalkService getTalkService(final String webHook) {
+            return new StandardTalkService(webHook);
         }
 
         @Override
         public String getDisplayName() {
-            return "Talk Notifications";
+            return "Jianliao Notifications";
         }
 
-        public FormValidation doTestConnection(@QueryParameter("talkToken") final String authToken,
+        public FormValidation doTestConnection(@QueryParameter("talkWebHook") final String webHook,
                                                @QueryParameter("talkBuildServerUrl") final String buildServerUrl) throws FormException {
             try {
-                String targetToken = authToken;
-                if (StringUtils.isEmpty(targetToken)) {
-                    targetToken = this.token;
+                String targetUrl = webHook;
+                if (StringUtils.isEmpty(targetUrl)) {
+                    targetUrl = this.webHook;
                 }
                 String targetBuildServerUrl = buildServerUrl;
                 if (StringUtils.isEmpty(targetBuildServerUrl)) {
                     targetBuildServerUrl = this.buildServerUrl;
                 }
-                TalkService testTalkService = getTalkService(targetToken);
-                String message = "Talk/Jenkins plugin: you're all set on " + targetBuildServerUrl;
+                TalkService testTalkService = getTalkService(targetUrl);
+                String message = "Jianliao/Jenkins plugin: you're all set on " + targetBuildServerUrl;
                 boolean success = testTalkService.publish(message);
                 return success ? FormValidation.ok("Success") : FormValidation.error("Failure");
             } catch (Exception e) {

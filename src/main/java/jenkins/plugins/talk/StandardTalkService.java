@@ -18,12 +18,11 @@ public class StandardTalkService implements TalkService {
 
     private static final Logger logger = Logger.getLogger(StandardTalkService.class.getName());
 
-    private String host = "talk.ai";
-    private String token;
+    private String webHook;
 
-    public StandardTalkService(String token) {
+    public StandardTalkService(String hookUrl) {
         super();
-        this.token = token;
+        this.webHook = hookUrl;
     }
 
     public boolean publish(String message) {
@@ -32,7 +31,7 @@ public class StandardTalkService implements TalkService {
 
     public boolean publish(String message, String openLink) {
         boolean result = true;
-        String url = "https://" + host + "/v1/services/webhook/" + token;
+        String url = webHook;
         logger.info("Posting: to talk.ai using " + url +": " + message + " link:" + openLink);
         HttpClient client = getHttpClient();
         PostMethod post = new PostMethod(url);
@@ -81,7 +80,4 @@ public class StandardTalkService implements TalkService {
         return client;
     }
 
-    void setHost(String host) {
-        this.host = host;
-    }
 }

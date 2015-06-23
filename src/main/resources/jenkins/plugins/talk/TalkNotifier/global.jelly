@@ -12,14 +12,14 @@
     so it should be straightforward to find them.
   -->
 <f:section title="Global Jianliao Notifier Settings" name="talk">
-    <f:entry title="Integration Token" help="${rootURL}/plugin/talk/help-globalConfig-talkToken.html">
-        <f:textbox field="token" name="talkToken" value="${descriptor.getToken()}" />
+    <f:entry title="Web Hook URL" help="${rootURL}/plugin/talk/help-globalConfig-webHook.html">
+        <f:textbox field="webHookUrl" name="talkWebHook" value="${descriptor.getWebHook()}" />
     </f:entry>
     <f:entry title="Build Server URL" help="${rootURL}/plugin/talk/help-globalConfig-talkBuildServerUrl.html">
         <f:textbox field="buildServerUrl" name="talkBuildServerUrl" value="${descriptor.getBuildServerUrl()}" />
     </f:entry>
     <f:validateButton
         title="${%Test Connection}" progress="${%Testing...}"
-        method="testConnection" with="talkToken,talkBuildServerUrl" />
+        method="testConnection" with="talkWebHook,talkBuildServerUrl" />
   </f:section>
 </j:jelly>

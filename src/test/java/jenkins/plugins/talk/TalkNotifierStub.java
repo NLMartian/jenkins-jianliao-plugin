@@ -21,7 +21,7 @@ public class TalkNotifierStub extends TalkNotifier {
         }
 
         @Override
-        TalkService getTalkService(final String authToken) {
+        TalkService getTalkService(final String webHook) {
             return talkService;
         }
 
