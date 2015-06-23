@@ -15,7 +15,7 @@ public class StandardTalkServiceTest {
     @Test
     public void publishWithBadHostShouldNotRethrowExceptions() {
         StandardTalkService service = new StandardTalkService("token");
-        service.setHost("hostvaluethatwillcausepublishtofail");
+        service.setWebHook("hostvaluethatwillcausepublishtofail");
         service.publish("message");
     }
 

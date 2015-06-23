@@ -80,4 +80,7 @@ public class StandardTalkService implements TalkService {
         return client;
     }
 
+    public void setWebHook(String webHook) {
+        this.webHook = webHook;
+    }
 }
