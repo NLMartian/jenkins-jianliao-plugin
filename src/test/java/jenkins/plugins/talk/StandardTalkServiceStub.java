@@ -4,7 +4,7 @@ public class StandardTalkServiceStub extends StandardTalkService {
 
     private HttpClientStub httpClientStub;
 
-    public StandardTalkServiceStub(String teamDomain, String token, String roomId) {
+    public StandardTalkServiceStub(String token) {
         super(token);
     }
 

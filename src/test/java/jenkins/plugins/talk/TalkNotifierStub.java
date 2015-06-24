@@ -7,26 +7,26 @@ public class TalkNotifierStub extends TalkNotifier {
                             boolean notifyNotBuilt, boolean notifySuccess, boolean notifyUnstable, boolean notifyBackToNormal,
                             boolean notifyRepeatedFailure, boolean includeTestSummary, boolean showCommitList,
                             boolean includeCustomMessage, String customMessage) {
-        super(teamDomain, authToken, room, buildServerUrl, sendAs, startNotification, notifyAborted, notifyFailure,
+        super(authToken, buildServerUrl, sendAs, startNotification, notifyAborted, notifyFailure,
                 notifyNotBuilt, notifySuccess, notifyUnstable, notifyBackToNormal, notifyRepeatedFailure,
-                includeTestSummary, showCommitList, includeCustomMessage, customMessage);
+                includeTestSummary, showCommitList);
     }
 
     public static class DescriptorImplStub extends TalkNotifier.DescriptorImpl {
 
-        private TalkService slackService;
+        private TalkService talkService;
 
         @Override
         public synchronized void load() {
         }
 
         @Override
-        TalkService getSlackService(final String teamDomain, final String authToken, final String room) {
-            return slackService;
+        TalkService getTalkService(final String webHook) {
+            return talkService;
         }
 
-        public void setSlackService(TalkService slackService) {
-            this.slackService = slackService;
+        public void setTalkService(TalkService talkService) {
+            this.talkService = talkService;
         }
     }
 }

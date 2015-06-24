@@ -15,7 +15,7 @@ public class StandardTalkServiceTest {
     @Test
     public void publishWithBadHostShouldNotRethrowExceptions() {
         StandardTalkService service = new StandardTalkService("token");
-        service.setHost("hostvaluethatwillcausepublishtofail");
+        service.setWebHook("hostvaluethatwillcausepublishtofail");
         service.publish("message");
     }
 
@@ -28,76 +28,4 @@ public class StandardTalkServiceTest {
         service.publish("message");
     }
 
-    /**
-     * Use a valid team domain, but a bad token
-     */
-    @Test
-    public void invalidTokenShouldFail() {
-        StandardTalkService service = new StandardTalkService("token");
-        service.publish("message");
-    }
-
-    @Test
-    public void publishToASingleRoomSendsASingleMessage() {
-        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        service.setHttpClient(httpClientStub);
-        service.publish("message");
-        assertEquals(1, service.getHttpClient().getNumberOfCallsToExecuteMethod());
-    }
-
-    @Test
-    public void publishToMultipleRoomsSendsAMessageToEveryRoom() {
-        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1,#room2,#room3");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        service.setHttpClient(httpClientStub);
-        service.publish("message");
-        assertEquals(3, service.getHttpClient().getNumberOfCallsToExecuteMethod());
-    }
-
-    @Test
-    public void successfulPublishToASingleRoomReturnsTrue() {
-        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        httpClientStub.setHttpStatus(HttpStatus.SC_OK);
-        service.setHttpClient(httpClientStub);
-        assertTrue(service.publish("message"));
-    }
-
-    @Test
-    public void successfulPublishToMultipleRoomsReturnsTrue() {
-        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1,#room2,#room3");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        httpClientStub.setHttpStatus(HttpStatus.SC_OK);
-        service.setHttpClient(httpClientStub);
-        assertTrue(service.publish("message"));
-    }
-
-    @Test
-    public void failedPublishToASingleRoomReturnsFalse() {
-        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        httpClientStub.setHttpStatus(HttpStatus.SC_NOT_FOUND);
-        service.setHttpClient(httpClientStub);
-        assertFalse(service.publish("message"));
-    }
-
-    @Test
-    public void singleFailedPublishToMultipleRoomsReturnsFalse() {
-        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "#room1,#room2,#room3");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        httpClientStub.setFailAlternateResponses(true);
-        httpClientStub.setHttpStatus(HttpStatus.SC_OK);
-        service.setHttpClient(httpClientStub);
-        assertFalse(service.publish("message"));
-    }
-
-    @Test
-    public void publishToEmptyRoomReturnsTrue() {
-        StandardTalkServiceStub service = new StandardTalkServiceStub("domain", "token", "");
-        HttpClientStub httpClientStub = new HttpClientStub();
-        httpClientStub.setHttpStatus(HttpStatus.SC_OK);
-        service.setHttpClient(httpClientStub);
-        assertTrue(service.publish("message"));
-    }
 }

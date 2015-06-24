@@ -19,7 +19,7 @@
 
     <artifactId>jianliao</artifactId>
     <packaging>hpi</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <name>Jianliao Notification Plugin</name>
     <description>A Build status publisher that notifies topic on a Jianliao team</description>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/Jianliao+Plugin</url>
@@ -36,9 +36,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com/jenkinsci/slack-plugin.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/slack-plugin.git</developerConnection>
-        <url>https://github.com/jenkinsci/slack-plugin</url>
+        <connection>scm:git:ssh://git@github.com/jenkinsci/jianliao-plugin.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/jenkinsci/jianliao-plugin.git</developerConnection>
+        <url>https://github.com/jenkinsci/jianliao-plugin</url>
         <tag>HEAD</tag>
     </scm>
 
@@ -123,8 +123,8 @@
     -->
     <developers>
         <developer>
-            <id>nlmartian</id>
-            <name>Junguan Chu</name>
+            <id>jianliao</id>
+            <name>Junguan Zhu</name>
             <email>nl.martian@gmail.com</email>
             <url>https://github.com/nlmartian</url>
             <roles>

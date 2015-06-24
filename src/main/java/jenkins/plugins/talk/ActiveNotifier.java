@@ -1,30 +1,17 @@
 package jenkins.plugins.talk;
 
-import hudson.EnvVars;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-import hudson.model.BuildListener;
-import hudson.model.Cause;
-import hudson.model.CauseAction;
-import hudson.model.Hudson;
-import hudson.model.Result;
-import hudson.model.Run;
+import hudson.model.*;
 import hudson.scm.ChangeLogSet;
 import hudson.scm.ChangeLogSet.AffectedFile;
 import hudson.scm.ChangeLogSet.Entry;
 import hudson.triggers.SCMTrigger;
-import hudson.util.LogTaskListener;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import static java.util.logging.Level.INFO;
-import static java.util.logging.Level.SEVERE;
 
 @SuppressWarnings("rawtypes")
 public class ActiveNotifier implements FineGrainedNotifier {
@@ -66,7 +53,7 @@ public class ActiveNotifier implements FineGrainedNotifier {
         if (changes != null) {
             notifyStart(build, changes);
         } else {
-            notifyStart(build, getBuildStatusMessage(build, notifier.includeCustomMessage()));
+            notifyStart(build, getBuildStatusMessage(build));
         }
     }
 
@@ -102,7 +89,7 @@ public class ActiveNotifier implements FineGrainedNotifier {
                 && notifier.getNotifyBackToNormal())
                 || (result == Result.SUCCESS && notifier.getNotifySuccess())
                 || (result == Result.UNSTABLE && notifier.getNotifyUnstable())) {
-            getTalk(r).publish(getBuildStatusMessage(r, notifier.includeCustomMessage()), getOpenLink(r));
+            getTalk(r).publish(getBuildStatusMessage(r), getOpenLink(r));
             if (notifier.getShowCommitList()) {
                 logger.info("show commit list");
                 getTalk(r).publish(getCommitList(r), getOpenLink(r));
@@ -178,13 +165,10 @@ public class ActiveNotifier implements FineGrainedNotifier {
         return notifier.getBuildServerUrl() + r.getUrl();
     }
 
-    String getBuildStatusMessage(AbstractBuild r, boolean includeCustomMessage) {
+    String getBuildStatusMessage(AbstractBuild r) {
         MessageBuilder message = new MessageBuilder(notifier, r);
         message.appendStatusMessage();
         message.appendDuration();
-        if (includeCustomMessage) {
-            message.appendCustomMessage();
-        }
         return message.toString();
     }
 
@@ -258,22 +242,6 @@ public class ActiveNotifier implements FineGrainedNotifier {
         public MessageBuilder appendDuration() {
             message.append(" after ");
             message.append(build.getDurationString());
-            return this;
-        }
-
-        public MessageBuilder appendCustomMessage() {
-            AbstractProject<?, ?> project = build.getProject();
-            String customMessage = notifier.getCustomMessage();
-            EnvVars envVars = new EnvVars();
-            try {
-                envVars = build.getEnvironment(new LogTaskListener(logger, INFO));
-            } catch (IOException e) {
-                logger.log(SEVERE, e.getMessage(), e);
-            } catch (InterruptedException e) {
-                logger.log(SEVERE, e.getMessage(), e);
-            }
-            message.append("\n");
-            message.append(envVars.expand(customMessage));
             return this;
         }
 

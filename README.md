@@ -1,10 +1,10 @@
 # Talk plugin for Jenkins
 
-Started with a fork of the slack plugin:
+Started with a fork of the talk plugin:
 
-https://github.com/jenkinsci/slack-plugin
+https://github.com/jenkinsci/jianliao-plugin
 
-Which was, in turn, a fork of the Campfire plugin.
+Which was, in turn, a fork of the Slack plugin.
 
 # Jenkins Instructions
 
